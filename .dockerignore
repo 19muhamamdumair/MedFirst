@@ -1,0 +1,6 @@
+# Ignore everything except essential files
+*
+!.gitignore
+!requirements.txt
+!*.py
+!Dockerfile
