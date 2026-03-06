@@ -37,28 +37,36 @@ export function AssessmentScreen({
   onSendText,
 }: AssessmentScreenProps) {
   return (
-    <section className="flex flex-col h-[calc(100vh-80px)] p-4 gap-4">
-      {/* Video Feed */}
-      <VideoFeed
-        onVideoRef={onVideoRef}
-        onCanvasRef={onCanvasRef}
-        isLive={isLive}
-      />
+    <section className="flex flex-col h-[calc(100vh-64px)] p-4 md:p-6 gap-3">
+      {/* Background gradient */}
+      <div className="fixed inset-0 -z-10 bg-gradient-to-b from-slate-50 via-white to-blue-50/30" />
       
-      {/* Response Panel */}
-      <div className="flex-1 min-h-0">
+      {/* Video Feed - takes more than half the screen */}
+      <div className="relative flex-[5]">
+        <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur opacity-20" />
+        <VideoFeed
+          onVideoRef={onVideoRef}
+          onCanvasRef={onCanvasRef}
+          isLive={isLive}
+        />
+      </div>
+      
+      {/* Response Panel - smaller section */}
+      <div className="flex-1 min-h-[80px] overflow-auto">
         <ResponsePanel response={response} transcript={transcript} isSpeaking={isSpeaking} />
       </div>
       
-      {/* Control Bar */}
-      <ControlBar
-        isMicActive={isMicActive}
-        onMicToggle={onMicToggle}
-        onInterrupt={onInterrupt}
-        onCameraSwitch={onCameraSwitch}
-        onEnd={onEnd}
-        onSendText={onSendText}
-      />
+      {/* Control Bar - fixed at bottom, never shrinks */}
+      <div className="flex-shrink-0">
+        <ControlBar
+          isMicActive={isMicActive}
+          onMicToggle={onMicToggle}
+          onInterrupt={onInterrupt}
+          onCameraSwitch={onCameraSwitch}
+          onEnd={onEnd}
+          onSendText={onSendText}
+        />
+      </div>
     </section>
   );
 }
