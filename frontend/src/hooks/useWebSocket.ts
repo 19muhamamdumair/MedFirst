@@ -44,7 +44,16 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
 
     // Generate a unique session ID
     const sessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const baseUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8080';
+    
+    // In production, NEXT_PUBLIC_WS_URL must be set. In development, fallback to localhost
+    const isDev = process.env.NODE_ENV === 'development';
+    const baseUrl = process.env.NEXT_PUBLIC_WS_URL || (isDev ? 'ws://localhost:8080' : '');
+    
+    if (!baseUrl) {
+      console.error('ERROR: NEXT_PUBLIC_WS_URL environment variable is not set for production!');
+      return;
+    }
+    
     const wsUrl = `${baseUrl}/ws/emergency/${sessionId}`;
     console.log('Connecting to:', wsUrl);
     
