@@ -14,7 +14,7 @@ export default function PrivacyPolicy() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </div>
-            <span className="text-lg font-bold text-gray-900">MedFirst.Ai</span>
+            <span className="text-lg font-bold text-gray-900">MedFirstAi</span>
           </Link>
         </div>
       </header>
@@ -30,12 +30,12 @@ export default function PrivacyPolicy() {
             <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg mb-4">
               <p className="text-amber-800 font-medium">Important Notice</p>
               <p className="text-amber-700 text-sm mt-1">
-                MedFirst.Ai is a <strong>prototype application</strong> created for the Google Gemini Live Agent Challenge. 
+                MedFirstAi is a <strong>prototype application</strong> created for the Google Gemini Live Agent Challenge. 
                 It is <strong>not a certified medical device</strong> and should not replace professional medical advice or emergency services.
               </p>
             </div>
             <p className="text-gray-600 leading-relaxed">
-              MedFirst.Ai is an AI-powered first aid assistant that uses your device&apos;s camera and microphone to provide 
+              MedFirstAi is an AI-powered first aid assistant that uses your device&apos;s camera and microphone to provide 
               real-time guidance during emergency situations. The app is designed to help users while they wait for 
               professional emergency responders.
             </p>
@@ -43,7 +43,7 @@ export default function PrivacyPolicy() {
 
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">2. What Data We Collect</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">When you use MedFirst.Ai, the following data is processed:</p>
+            <p className="text-gray-600 leading-relaxed mb-4">When you use MedFirstAi, the following data is processed:</p>
             <ul className="list-disc list-inside text-gray-600 space-y-2">
               <li><strong>Video frames</strong> from your camera (sent in real-time for AI analysis)</li>
               <li><strong>Audio</strong> from your microphone (for voice interaction with the AI)</li>
@@ -62,7 +62,7 @@ export default function PrivacyPolicy() {
             </div>
             <ul className="list-disc list-inside text-gray-600 space-y-2">
               <li>Video and audio are streamed directly to Google&apos;s Gemini API for processing</li>
-              <li>No recordings are saved on MedFirst.Ai servers</li>
+              <li>No recordings are saved on MedFirstAi servers</li>
               <li>Session data is cleared when you end the session or close the app</li>
               <li>We do not sell or share your data with third parties for marketing</li>
             </ul>

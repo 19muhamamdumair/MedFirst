@@ -14,7 +14,7 @@ export default function TermsOfService() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </div>
-            <span className="text-lg font-bold text-gray-900">MedFirst.Ai</span>
+            <span className="text-lg font-bold text-gray-900">MedFirstAi</span>
           </Link>
         </div>
       </header>
@@ -31,7 +31,7 @@ export default function TermsOfService() {
               <p className="text-red-800 font-bold text-lg">IMPORTANT: Call 999 First!</p>
               <p className="text-red-700 mt-2">
                 In any life-threatening emergency, you must <strong>call 999 (or your local emergency number) FIRST</strong> before 
-                using this app. MedFirst.Ai is designed to assist you <strong>while you wait for professional help</strong>, 
+                using this app. MedFirstAi is designed to assist you <strong>while you wait for professional help</strong>, 
                 not to replace emergency services.
               </p>
             </div>
@@ -40,7 +40,7 @@ export default function TermsOfService() {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">1. Acceptance of Terms</h2>
             <p className="text-gray-600 leading-relaxed">
-              By using MedFirst.Ai, you agree to these Terms of Service. If you do not agree, please do not use the app.
+              By using MedFirstAi, you agree to these Terms of Service. If you do not agree, please do not use the app.
               We may update these terms from time to time, and your continued use of the app constitutes acceptance of any changes.
             </p>
           </section>
@@ -50,7 +50,7 @@ export default function TermsOfService() {
             <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg mb-4">
               <p className="text-amber-800 font-medium">Prototype Disclaimer</p>
               <p className="text-amber-700 text-sm mt-1">
-                MedFirst.Ai is a <strong>prototype application</strong> developed for the Google Gemini Live Agent Challenge. 
+                MedFirstAi is a <strong>prototype application</strong> developed for the Google Gemini Live Agent Challenge. 
                 It is a technology demonstration and <strong>not a certified medical device</strong>.
               </p>
             </div>
@@ -64,7 +64,7 @@ export default function TermsOfService() {
 
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">3. Your Responsibilities</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">When using MedFirst.Ai, you agree to:</p>
+            <p className="text-gray-600 leading-relaxed mb-4">When using MedFirstAi, you agree to:</p>
             <ul className="list-disc list-inside text-gray-600 space-y-2">
               <li><strong>Call 999</strong> (or your local emergency number) for any life-threatening emergency</li>
               <li>Use this app only as a <strong>supplementary aid</strong>, not your primary source of medical guidance</li>
@@ -80,7 +80,7 @@ export default function TermsOfService() {
               To the fullest extent permitted by law:
             </p>
             <ul className="list-disc list-inside text-gray-600 space-y-2">
-              <li>MedFirst.Ai is provided <strong>&quot;as is&quot;</strong> without warranties of any kind</li>
+              <li>MedFirstAi is provided <strong>&quot;as is&quot;</strong> without warranties of any kind</li>
               <li>We do not guarantee the accuracy, completeness, or usefulness of any information provided</li>
               <li>We are not liable for any injuries, damages, or losses resulting from the use of this app</li>
               <li>You use this app entirely <strong>at your own risk</strong></li>
@@ -90,7 +90,7 @@ export default function TermsOfService() {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">5. AI Technology</h2>
             <p className="text-gray-600 leading-relaxed mb-4">
-              MedFirst.Ai uses Google&apos;s Gemini Live API for real-time video and audio analysis. By using this app, you understand that:
+              MedFirstAi uses Google&apos;s Gemini Live API for real-time video and audio analysis. By using this app, you understand that:
             </p>
             <ul className="list-disc list-inside text-gray-600 space-y-2">
               <li>AI technology has limitations and can make errors</li>
@@ -102,7 +102,7 @@ export default function TermsOfService() {
 
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">6. Permitted Use</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">You may use MedFirst.Ai for:</p>
+            <p className="text-gray-600 leading-relaxed mb-4">You may use MedFirstAi for:</p>
             <ul className="list-disc list-inside text-gray-600 space-y-2">
               <li>Personal first aid guidance in emergency situations</li>
               <li>Learning about basic first aid procedures</li>
@@ -119,7 +119,7 @@ export default function TermsOfService() {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">7. Changes to Service</h2>
             <p className="text-gray-600 leading-relaxed">
-              We reserve the right to modify, suspend, or discontinue MedFirst.Ai at any time without notice. 
+              We reserve the right to modify, suspend, or discontinue MedFirstAi at any time without notice. 
               As this is a prototype for a competition, the service may be limited in availability.
             </p>
           </section>
@@ -137,7 +137,7 @@ export default function TermsOfService() {
             <div className="bg-blue-50 border border-blue-200 p-6 rounded-xl text-center">
               <p className="text-blue-800 font-semibold text-lg mb-2">Remember</p>
               <p className="text-blue-700">
-                MedFirst.Ai is here to help, but professional emergency services save lives.
+                MedFirstAi is here to help, but professional emergency services save lives.
                 <br />
                 <strong>When in doubt, call 999.</strong>
               </p>

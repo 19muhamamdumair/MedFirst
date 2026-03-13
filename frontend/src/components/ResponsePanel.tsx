@@ -56,7 +56,7 @@ export function ResponsePanel({ response, transcript, isSpeaking }: ResponsePane
               <span className="w-1 h-4 bg-white rounded-full animate-soundwave" style={{ animationDelay: '300ms' }} />
               <span className="w-1 h-5 bg-white rounded-full animate-soundwave" style={{ animationDelay: '400ms' }} />
             </div>
-            <p className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 font-semibold">MedFirst.Ai is speaking...</p>
+            <p className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 font-semibold">MedFirstAi is speaking...</p>
           </div>
         ) : response ? (
           <div
