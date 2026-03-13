@@ -121,6 +121,13 @@ export function LandingScreen({ onStart, isLoading }: LandingScreenProps) {
           </svg>
           <p>This is an AI assistant. Always call <span className="font-bold text-red-500">999</span> for serious emergencies.</p>
         </div>
+        
+        {/* Footer Links */}
+        <div className="mt-6 flex items-center justify-center gap-4 text-xs text-gray-400">
+          <a href="/privacy" className="hover:text-gray-600 transition-colors">Privacy Policy</a>
+          <span className="text-gray-300">|</span>
+          <a href="/terms" className="hover:text-gray-600 transition-colors">Terms of Service</a>
+        </div>
       </div>
     </section>
   );
