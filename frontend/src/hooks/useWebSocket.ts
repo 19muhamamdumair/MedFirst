@@ -45,13 +45,17 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
     // Generate a unique session ID
     const sessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
-    // In production, NEXT_PUBLIC_WS_URL must be set. In development, fallback to localhost
+    // Determine WebSocket URL based on environment
     const isDev = process.env.NODE_ENV === 'development';
-    const baseUrl = process.env.NEXT_PUBLIC_WS_URL || (isDev ? 'ws://localhost:8080' : '');
+    let baseUrl = process.env.NEXT_PUBLIC_WS_URL;
     
     if (!baseUrl) {
-      console.error('ERROR: NEXT_PUBLIC_WS_URL environment variable is not set for production!');
-      return;
+      if (isDev) {
+        baseUrl = 'ws://localhost:8080';
+      } else {
+        // Production: Use the Cloud Run backend URL
+        baseUrl = 'wss://medfirstai-backend-123861845338.us-central1.run.app';
+      }
     }
     
     const wsUrl = `${baseUrl}/ws/emergency/${sessionId}`;
