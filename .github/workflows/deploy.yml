@@ -1,0 +1,99 @@
+# GitHub Actions workflow for MedFirstAi
+# Automatically deploys to Google Cloud Run on push to main branch
+#
+# Required secrets:
+#   - GCP_PROJECT_ID: Your Google Cloud project ID
+#   - GCP_SA_KEY: Service account JSON key with Cloud Run deploy permissions
+#   - GOOGLE_API_KEY: Gemini API key
+
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # Allow manual trigger
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: us-central1
+  BACKEND_SERVICE: medfirstai-backend
+  FRONTEND_SERVICE: medfirstai-frontend
+
+jobs:
+  deploy:
+    name: Deploy to Cloud Run
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Configure Docker for GCR
+        run: gcloud auth configure-docker --quiet
+
+      - name: Build and push backend image
+        run: |
+          docker build -t gcr.io/$PROJECT_ID/$BACKEND_SERVICE:${{ github.sha }} \
+            -t gcr.io/$PROJECT_ID/$BACKEND_SERVICE:latest \
+            -f backend/Dockerfile backend/
+          docker push gcr.io/$PROJECT_ID/$BACKEND_SERVICE:${{ github.sha }}
+          docker push gcr.io/$PROJECT_ID/$BACKEND_SERVICE:latest
+
+      - name: Build and push frontend image
+        run: |
+          docker build -t gcr.io/$PROJECT_ID/$FRONTEND_SERVICE:${{ github.sha }} \
+            -t gcr.io/$PROJECT_ID/$FRONTEND_SERVICE:latest \
+            -f frontend/Dockerfile frontend/
+          docker push gcr.io/$PROJECT_ID/$FRONTEND_SERVICE:${{ github.sha }}
+          docker push gcr.io/$PROJECT_ID/$FRONTEND_SERVICE:latest
+
+      - name: Deploy backend to Cloud Run
+        run: |
+          gcloud run deploy $BACKEND_SERVICE \
+            --image gcr.io/$PROJECT_ID/$BACKEND_SERVICE:${{ github.sha }} \
+            --region $REGION \
+            --platform managed \
+            --allow-unauthenticated \
+            --port 8080 \
+            --memory 512Mi \
+            --timeout 300 \
+            --max-instances 2 \
+            --session-affinity \
+            --set-env-vars "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}"
+
+      - name: Deploy frontend to Cloud Run
+        run: |
+          gcloud run deploy $FRONTEND_SERVICE \
+            --image gcr.io/$PROJECT_ID/$FRONTEND_SERVICE:${{ github.sha }} \
+            --region $REGION \
+            --platform managed \
+            --allow-unauthenticated \
+            --port 3000 \
+            --memory 512Mi \
+            --max-instances 2
+
+      - name: Get service URLs
+        run: |
+          BACKEND_URL=$(gcloud run services describe $BACKEND_SERVICE --region $REGION --format 'value(status.url)')
+          FRONTEND_URL=$(gcloud run services describe $FRONTEND_SERVICE --region $REGION --format 'value(status.url)')
+          echo "### Deployment Complete! :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Service | URL |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|-----|" >> $GITHUB_STEP_SUMMARY
+          echo "| Frontend | $FRONTEND_URL |" >> $GITHUB_STEP_SUMMARY
+          echo "| Backend | $BACKEND_URL |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Health check
+        run: |
+          BACKEND_URL=$(gcloud run services describe $BACKEND_SERVICE --region $REGION --format 'value(status.url)')
+          curl -f "$BACKEND_URL/health" || echo "Health check failed"

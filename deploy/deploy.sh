@@ -1,5 +1,6 @@
 #!/bin/bash
-# Quick deployment script for MedFirst to Google Cloud Run
+# MedFirstAi Automated Deployment Script
+# Deploys both backend and frontend to Google Cloud Run
 
 set -e
 
@@ -7,10 +8,21 @@ set -e
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${GREEN}🚀 MedFirst Deployment Script${NC}"
-echo "================================"
+echo -e "${BLUE}"
+echo "╔═══════════════════════════════════════════╗"
+echo "║     MedFirstAI Deployment Script          ║"
+echo "║     Google Cloud Run Automation           ║"
+echo "╚═══════════════════════════════════════════╝"
+echo -e "${NC}"
+
+# Configuration
+PROJECT_ID="${PROJECT_ID:-bright-spanner-446817-v7}"
+REGION="${REGION:-us-central1}"
+BACKEND_SERVICE="medfirstai-backend"
+FRONTEND_SERVICE="medfirstai-frontend"
 
 # Check if gcloud is installed
 if ! command -v gcloud &> /dev/null; then
@@ -19,86 +31,95 @@ if ! command -v gcloud &> /dev/null; then
     exit 1
 fi
 
-# Get project ID
-PROJECT_ID=$(gcloud config get-value project 2>/dev/null)
-if [ -z "$PROJECT_ID" ]; then
-    echo -e "${YELLOW}No project set. Please enter your GCP project ID:${NC}"
-    read PROJECT_ID
-    gcloud config set project $PROJECT_ID
+# Check if logged in
+if ! gcloud auth list --filter=status:ACTIVE --format="value(account)" &> /dev/null; then
+    echo -e "${YELLOW}Not logged in. Running gcloud auth login...${NC}"
+    gcloud auth login
 fi
 
-echo -e "${GREEN}Using project: $PROJECT_ID${NC}"
-
-# Get region
-REGION=${REGION:-us-central1}
-echo -e "${GREEN}Using region: $REGION${NC}"
+# Set project
+echo -e "${GREEN}Setting project: $PROJECT_ID${NC}"
+gcloud config set project $PROJECT_ID
 
 # Check for API key
 if [ -z "$GOOGLE_API_KEY" ]; then
-    echo -e "${YELLOW}Enter your Gemini API key:${NC}"
-    read -s GOOGLE_API_KEY
+    if [ -f "../.env" ]; then
+        export GOOGLE_API_KEY=$(grep GOOGLE_API_KEY ../.env | cut -d '=' -f2)
+    fi
+    
+    if [ -z "$GOOGLE_API_KEY" ]; then
+        echo -e "${YELLOW}Enter your Gemini API key:${NC}"
+        read -s GOOGLE_API_KEY
+        echo ""
+    fi
 fi
 
+echo -e "${GREEN}API Key: ****${GOOGLE_API_KEY: -4}${NC}"
+
 # Enable required APIs
-echo -e "\n${GREEN}Enabling required APIs...${NC}"
+echo -e "\n${GREEN}[1/5] Enabling required APIs...${NC}"
 gcloud services enable \
     run.googleapis.com \
     cloudbuild.googleapis.com \
-    containerregistry.googleapis.com \
+    artifactregistry.googleapis.com \
     --quiet
 
-# Build and push backend
-echo -e "\n${GREEN}Building backend...${NC}"
-cd "$(dirname "$0")/../backend"
-gcloud builds submit --tag gcr.io/$PROJECT_ID/medfirst-backend
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 
-# Deploy backend
-echo -e "\n${GREEN}Deploying backend to Cloud Run...${NC}"
-gcloud run deploy medfirst-backend \
-    --image gcr.io/$PROJECT_ID/medfirst-backend \
+# Deploy Backend
+echo -e "\n${GREEN}[2/5] Building and deploying backend...${NC}"
+cd "$ROOT_DIR/backend"
+
+gcloud run deploy $BACKEND_SERVICE \
+    --source . \
     --region $REGION \
-    --platform managed \
     --allow-unauthenticated \
-    --set-env-vars "GOOGLE_API_KEY=$GOOGLE_API_KEY" \
+    --port 8080 \
     --memory 512Mi \
-    --cpu 1 \
-    --timeout 3600 \
-    --concurrency 80
+    --timeout 300 \
+    --max-instances 2 \
+    --session-affinity \
+    --set-env-vars "GOOGLE_API_KEY=$GOOGLE_API_KEY" \
+    --quiet
 
 # Get backend URL
-BACKEND_URL=$(gcloud run services describe medfirst-backend --region $REGION --format 'value(status.url)')
-echo -e "${GREEN}Backend deployed at: $BACKEND_URL${NC}"
+BACKEND_URL=$(gcloud run services describe $BACKEND_SERVICE --region $REGION --format 'value(status.url)')
+echo -e "${GREEN}Backend deployed: $BACKEND_URL${NC}"
 
-# Update frontend with backend URL
-echo -e "\n${GREEN}Building frontend...${NC}"
-cd "$(dirname "$0")/../frontend"
+# Deploy Frontend
+echo -e "\n${GREEN}[3/5] Building and deploying frontend...${NC}"
+cd "$ROOT_DIR/frontend"
 
-# Create a production config
-cat > config.js << EOF
-window.MEDFIRST_CONFIG = {
-    backendUrl: '$BACKEND_URL'
-};
-EOF
-
-gcloud builds submit --tag gcr.io/$PROJECT_ID/medfirst-frontend
-
-# Deploy frontend
-echo -e "\n${GREEN}Deploying frontend to Cloud Run...${NC}"
-gcloud run deploy medfirst-frontend \
-    --image gcr.io/$PROJECT_ID/medfirst-frontend \
+gcloud run deploy $FRONTEND_SERVICE \
+    --source . \
     --region $REGION \
-    --platform managed \
     --allow-unauthenticated \
-    --memory 256Mi \
-    --cpu 1
+    --port 3000 \
+    --memory 512Mi \
+    --max-instances 2 \
+    --quiet
 
 # Get frontend URL
-FRONTEND_URL=$(gcloud run services describe medfirst-frontend --region $REGION --format 'value(status.url)')
+FRONTEND_URL=$(gcloud run services describe $FRONTEND_SERVICE --region $REGION --format 'value(status.url)')
+echo -e "${GREEN}Frontend deployed: $FRONTEND_URL${NC}"
 
-echo -e "\n${GREEN}================================${NC}"
-echo -e "${GREEN}🎉 Deployment Complete!${NC}"
-echo -e "${GREEN}================================${NC}"
-echo -e "Frontend: ${YELLOW}$FRONTEND_URL${NC}"
-echo -e "Backend:  ${YELLOW}$BACKEND_URL${NC}"
-echo ""
-echo -e "Open ${YELLOW}$FRONTEND_URL${NC} in your browser to use MedFirst!"
+# Test health endpoint
+echo -e "\n${GREEN}[4/5] Testing backend health...${NC}"
+HEALTH=$(curl -s "$BACKEND_URL/health" || echo '{"status":"error"}')
+echo "Health check: $HEALTH"
+
+# Summary
+echo -e "\n${BLUE}"
+echo "╔════════════════════════════════════════════════════════════════════════╗"
+echo "║                        DEPLOYMENT COMPLETE                              ║"
+echo "╠════════════════════════════════════════════════════════════════════════╣"
+printf "║  %-72s ║\n" "Frontend: $FRONTEND_URL"
+printf "║  %-72s ║\n" "Backend:  $BACKEND_URL"
+echo "╠════════════════════════════════════════════════════════════════════════╣"
+echo "║  Open the frontend URL in your browser to test!                        ║"
+echo "╚════════════════════════════════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+echo -e "\n${GREEN}[5/5] 🎉 Deployment successful!${NC}"
