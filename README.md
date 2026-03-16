@@ -75,7 +75,7 @@ MedFirst is a real-time emergency assistance agent that helps first responders a
 | **AI Model** | Gemini 2.0 Flash Live API |
 | **SDK** | Google GenAI SDK (Python) |
 | **Backend** | FastAPI + WebSockets |
-| **Frontend** | Vanilla JS + PWA |
+| **Frontend** | Next JS |
 | **Cloud** | Google Cloud Run |
 | **Build** | Cloud Build + Docker |
 
